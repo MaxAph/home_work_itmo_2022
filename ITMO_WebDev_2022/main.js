@@ -1,89 +1,151 @@
+import TodoVO from './src/model/vos/TodoVO.js';
+import { disableButtonWhenTextInvalid } from './src/model/utils/domUtils.js';
+import { isStringNotNumberAndNotEmpty } from './src/model/utils/stringUtils.js';
 import {
-    Earth,
-    Mars,
-    Moon,
-    MoveRotateAlgorithm,
-    PlanetComposable,
-    Position,
-    RenderCirclePlanetAlgorithm,
-    RenderSquarePlanetAlgorithm,
-    RotatedPlanet,
-    Sun,
-} from './src/solar_system.js';
+  localStorageListOf,
+  localStorageSaveListOfWithKey,
+} from './src/model/utils/databaseUtils.js';
+import TodoView from './src/view/TodoView.js';
 
-const canvas = document.createElement('canvas');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-canvas.style.backgroundColor = '#f1f1f1';
+const domInpTodoTitle = document.getElementById('inpTodoTitle');
+const domBtnCreateTodo = document.getElementById('btnCreateTodo');
+const domListOfTodos = document.getElementById('listOfTodos');
 
-document.getElementById('app').append(canvas);
+let selectedTodoVO = null;
+let selectedTodoViewItem = null;
+const hasSelectedTodo = () => !!selectedTodoVO;
 
-const ctx = canvas.getContext('2d');
+domBtnCreateTodo.addEventListener('click', onBtnCreateTodoClick);
+domInpTodoTitle.addEventListener('keyup', onInpTodoTitleKeyup);
+domListOfTodos.addEventListener('change', onTodoListChange);
+domListOfTodos.addEventListener('click', onTodoDomItemClicked);
 
-const sun = new Sun(new Position(canvas.width / 2, canvas.height / 2));
-const earth = new Earth(sun.position, sun.size + 100);
-const mars = new Mars(sun.position, sun.size + 250);
-const moon = new Moon(earth.position, earth.size + 30);
+const LOCAL_LIST_OF_TODOS = 'listOfTodos';
+const LOCAL_INPUT_TEXT = 'inputText';
 
-const planets = [sun, earth, moon, mars];
+const listOfTodos = localStorageListOf(LOCAL_LIST_OF_TODOS);
 
-window.requestAnimationFrame(renderPlanets);
+console.log('> Initial value -> listOfTodos', listOfTodos);
 
-const r1 = new RenderCirclePlanetAlgorithm('blue', 'lightblue', 50);
-const r2 = new RenderSquarePlanetAlgorithm('red', 'lightblue', 30);
-const m1 = new MoveRotateAlgorithm(150, 0.04);
+domInpTodoTitle.value = localStorage.getItem(LOCAL_INPUT_TEXT);
+render_TodoListInContainer(listOfTodos, domListOfTodos);
+disableOrEnable_CreateTodoButtonOnTodoInputTitle();
 
-const planetComposable = new PlanetComposable(new Position(100, 100), r1, m1);
+function onTodoDomItemClicked(event) {
+  const domElement = event.target;
+  console.log('> onTodoDomItemClicked -> domElement:', domElement);
+  if (!TodoView.isDomElementMatch(domElement)) return;
+  const currentTodoVO = listOfTodos.find((vo) => vo.id === domElement.id);
 
-document.onclick = (e) => {
-    planetComposable.offset = new Position(e.pageX, e.pageY);
-    if (planetComposable.renderAlgorithm instanceof RenderCirclePlanetAlgorithm) {
-        planetComposable.renderAlgorithm = r2;
-    } else planetComposable.renderAlgorithm = r1;
-    asteroids.push(createRandomAsteroids(e.pageX, e.pageY));
-};
+  const isItemSelected = selectedTodoVO === currentTodoVO;
 
-const asteroids = new Array(5).fill(10).map(() => createRandomAsteroids());
+  if (hasSelectedTodo) resetSelectedTodo();
+  console.log('> onTodoDomItemClicked -> isItemSelected:', isItemSelected);
 
-function renderPlanets() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (!isItemSelected) {
+    selectedTodoVO = currentTodoVO;
+    selectedTodoViewItem = domElement;
 
-    planetComposable.move();
+    domBtnCreateTodo.innerText = 'Update';
+    domInpTodoTitle.value = currentTodoVO.title;
+    selectedTodoViewItem.style.backgroundColor = 'lightgray';
+    onInpTodoTitleKeyup();
+  }
+}
 
-    renderAsteroids(canvas, asteroids);
+function onTodoListChange(event) {
+  console.log('> onTodoListChange -> event:', event);
+  const target = event.target;
+  const index = target.id;
+  if (index && typeof index === 'string') {
+    const indexInt = parseInt(index.trim());
+    const todoVO = listOfTodos[indexInt];
+    console.log('> onTodoListChange -> todoVO:', indexInt, todoVO);
+    todoVO.isCompleted = !!target.checked;
+    save_ListOfTodo();
+  }
+}
 
-    planets.forEach((item) => {
-        if (item instanceof RotatedPlanet) {
-            item.rotate();
-        }
-        item.render(ctx);
+function onBtnCreateTodoClick(event) {
+  // console.log('> domBtnCreateTodo -> handle(click)', this.attributes);
+  const todoTitle_Value_FromDomInput = domInpTodoTitle.value;
+  // console.log('> domBtnCreateTodo -> todoInputTitleValue:', todoTitleValueFromDomInput);
+
+  const isStringValid = isStringNotNumberAndNotEmpty(
+    todoTitle_Value_FromDomInput
+  );
+
+  if (isStringValid) {
+    create_TodoFromTextAndAddToList(todoTitle_Value_FromDomInput, listOfTodos);
+    clear_InputTextAndLocalStorage();
+    save_ListOfTodo();
+    render_TodoListInContainer(listOfTodos, domListOfTodos);
+    disableOrEnable_CreateTodoButtonOnTodoInputTitle();
+  }
+}
+
+function onInpTodoTitleKeyup() {
+  // console.log('> onInpTodoTitleKeyup:', event);
+  const inputValue = domInpTodoTitle.value;
+  // console.log('> onInpTodoTitleKeyup:', inputValue);
+  if (hasSelectedTodo()) {
+    disableOrEnable_CreateTodoButtonOnTodoInputTitle(() => {
+      return (
+        isStringNotNumberAndNotEmpty(inputValue) &&
+        selectedTodoVO.title !== inputValue
+      );
     });
-    planetComposable.render(ctx);
-
-    window.requestAnimationFrame(renderPlanets);
-}
-function renderAsteroids(canvas, array) {
-    const ctx = canvas.getContext('2d');
-    let counter = array.length;
-    const draw = (index) => {
-        const position = array[index];
-        ctx.fillStyle = 'black';
-        ctx.fillRect(position.x, position.y, 10, 10);
-        ctx.stroke();
-        ctx.fill();
-        if (++index < counter) draw(index);
-    };
-    draw(0);
-}
-function randomRange(max, min = 0) {
-    if(isNaN(max) || isNaN(min)) throw new Error('randomRange - error: "Input parameters  must')
-    return Math.random() * (max - min) + min;
-}
-function createRandomAsteroids(x, y) {
-    const borderSize = 40;
-    const randomX = x || randomRange(canvas.width - borderSize, borderSize);
-    const randomY = y || randomRange(canvas.height - borderSize, borderSize);
-    return new Position(randomX, randomY);
+  } else {
+    localStorage.setItem(LOCAL_INPUT_TEXT, inputValue);
+    disableOrEnable_CreateTodoButtonOnTodoInputTitle();
+  }
 }
 
-window.requestAnimationFrame(renderPlanets);
+function render_TodoListInContainer(listOfTodoVO, container) {
+  let output = '';
+  let todoVO;
+  for (let index in listOfTodoVO) {
+    todoVO = listOfTodoVO[index];
+    output += TodoView.createSimpleViewFromVO(index, todoVO);
+  }
+  container.innerHTML = output;
+}
+
+function resetSelectedTodo() {
+  console.log('> resetSelectedTodo -> selectedTodoVO:', selectedTodoVO);
+  domBtnCreateTodo.innerText = 'Create';
+  domInpTodoTitle.value = localStorage.getItem(LOCAL_INPUT_TEXT);
+  if (selectedTodoViewItem) selectedTodoViewItem.style.backgroundColor = '';
+  selectedTodoVO = null;
+  selectedTodoViewItem = null;
+  disableOrEnable_CreateTodoButtonOnTodoInputTitle();
+}
+
+function create_TodoFromTextAndAddToList(input, listOfTodos) {
+  console.log('> create_TodoFromTextAndAddToList -> input =', input);
+  listOfTodos.push(TodoVO.createFromTitle(input));
+}
+
+function clear_InputTextAndLocalStorage() {
+  domInpTodoTitle.value = '';
+  localStorage.removeItem(LOCAL_INPUT_TEXT);
+}
+
+function disableOrEnable_CreateTodoButtonOnTodoInputTitle(
+  validateInputMethod = isStringNotNumberAndNotEmpty
+) {
+  console.log(
+    '> disableOrEnableCreateTodoButtonOnTodoInputTitle -> domInpTodoTitle.value =',
+    domInpTodoTitle.value
+  );
+  const textToValidate = domInpTodoTitle.value;
+  disableButtonWhenTextInvalid(
+    domBtnCreateTodo,
+    textToValidate,
+    validateInputMethod
+  );
+}
+
+function save_ListOfTodo() {
+  localStorageSaveListOfWithKey(LOCAL_LIST_OF_TODOS, listOfTodos);
+}

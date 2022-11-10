@@ -6,12 +6,21 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "test:cy:open": "cypress open",
+    "preview": "vite preview",
+    "vitestui": "vitest --ui"
   },
   "devDependencies": {
-    "vite": "^3.2.0"
+    "@vitest/ui": "^0.25.1",
+    "cypress": "^10.11.0",
+    "prettier": "^2.7.1",
+    "vite": "^3.2.3",
+    "vitest": "^0.25.1"
   },
   "dependencies": {
     "git": "^0.1.5"
+  },
+  "prettier": {
+    "singleQuote": true
   }
 }
