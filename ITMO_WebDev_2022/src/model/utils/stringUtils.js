@@ -6,11 +6,11 @@ function isStringNotNumberAndNotEmpty(value) {
 
   const result = isValueString && isValueNotNumber && value.length > 0;
 
-  console.log('> isStringNotNumberAndNotEmpty -> result', {
-    result,
-    isInputValueString: isValueString,
-    isInputValueNotNumber: isValueNotNumber,
-  });
+  // console.log('> isStringNotNumberAndNotEmpty -> result', {
+  //   result,
+  //   isInputValueString: isValueString,
+  //   isInputValueNotNumber: isValueNotNumber,
+  // });
   return result;
 }
 

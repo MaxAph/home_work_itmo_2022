@@ -25,16 +25,16 @@ describe('empty spec', () => {
     todoListChildren.should('exist').should('have.length', 1);
     todoListChildren.first().should('contain.text', TEST_TODO_TEXT);
 
-    const chechChildren = () =>
+    const checkChildren = () =>
       cy
         .get('#listOfTodos > li > input[type="checkbox"]')
         .should('exist')
         .should('have.length', 1);
 
-    chechChildren();
+    checkChildren();
 
     cy.reload(true);
 
-    chechChildren();
+    checkChildren();
   });
 });
