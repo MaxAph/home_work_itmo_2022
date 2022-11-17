@@ -6,14 +6,34 @@ import {
   localStorageSaveListOfWithKey,
 } from './src/model/utils/databaseUtils.js';
 import TodoView from './src/view/TodoView.js';
+import ServerService from './src/services/ServerService.js';
 
-const domInpTodoTitle = document.getElementById('inpTodoTitle');
-const domBtnCreateTodo = document.getElementById('btnCreateTodo');
-const domListOfTodos = document.getElementById('listOfTodos');
+const $ = document.getElementById.bind(document);
+
+const domInpTodoTitle = $('inpTodoTitle');
+const domBtnCreateTodo = $('btnCreateTodo');
+const domListOfTodos = $('listOfTodos');
 
 let selectedTodoVO = null;
 let selectedTodoViewItem = null;
 const hasSelectedTodo = () => !!selectedTodoVO;
+
+const serverService = new ServerService(import.meta.env.VITE_DATA_SERVER);
+let listOfTodos = [];
+
+const LOCAL_LIST_OF_TODOS = 'listOfTodos';
+const LOCAL_INPUT_TEXT = 'inputText';
+
+serverService.requestTodos().then((todoList) => {
+  console.log('> Initial value -> listOfTodos', listOfTodos);
+
+  listOfTodos = todoList;
+  domInpTodoTitle.value = localStorage.getItem(LOCAL_INPUT_TEXT);
+  render_TodoListInContainer(listOfTodos, domListOfTodos);
+  disableOrEnable_CreateTodoButtonOnTodoInputTitle();
+  console.log('> requestTodos: result');
+  $('app').style.visibility = 'visible';
+});
 
 const debug = console.log;
 console.log = (...args) => {
@@ -24,43 +44,6 @@ domBtnCreateTodo.addEventListener('click', onBtnCreateTodoClick);
 domInpTodoTitle.addEventListener('keyup', onInpTodoTitleKeyup);
 domListOfTodos.addEventListener('change', onTodoListChange);
 domListOfTodos.addEventListener('click', onTodoDomItemClicked);
-
-const LOCAL_LIST_OF_TODOS = 'listOfTodos';
-const LOCAL_INPUT_TEXT = 'inputText';
-
-const listOfTodos = localStorageListOf(LOCAL_LIST_OF_TODOS);
-
-// console.log('> Initial value -> listOfTodos', listOfTodos);
-
-domInpTodoTitle.value = localStorage.getItem(LOCAL_INPUT_TEXT);
-render_TodoListInContainer(listOfTodos, domListOfTodos);
-disableOrEnable_CreateTodoButtonOnTodoInputTitle();
-
-const delay = (time) =>
-  new Promise((resolve, reject) => {
-    // console.log('Promise created');
-    // reject();
-    setTimeout(() => {
-      // console.log('Promise setTimeout');
-      resolve(122);
-    }, time);
-  });
-//   .then(() => {
-//     console.log('Promise then 1');
-//   })
-//   .then(() => {
-//     console.log('Promise then 2');
-//   })
-//   .catch(() => {
-//     console.log('Promise then 1');
-//   })
-//   .finally(() => {
-//     console.log('Promise finally');
-//   });
-//
-// delay.then(() => {
-//   console.log('Promise then 3');
-// });
 
 function onTodoDomItemClicked(event) {
   const domElement = event.target;
@@ -110,16 +93,6 @@ async function onBtnCreateTodoClick(event) {
   );
 
   if (isStringValid) {
-    const result = await delay(1000)
-      .then((param) => {
-        console.log('> delay -> then: data 1', param);
-        return param ? param * 2 : 0;
-      })
-      .then((param) => {
-        console.log('> delay -> then: data 2', param);
-        return `time = ${param}`;
-      });
-
     // console.log('> result -> result', result);
 
     // delay(1000).then(() => {

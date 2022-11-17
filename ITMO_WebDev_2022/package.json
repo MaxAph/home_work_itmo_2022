@@ -8,7 +8,9 @@
     "build": "vite build",
     "cy:open": "yarn dev & cypress open",
     "preview": "vite preview",
-    "vitestui": "vitest --ui"
+    "vitestui": "vitest --ui",
+    "server:simple": "simple-server dist 3000",
+    "server:json": "echo 'JSON Server Start' && json-server --watch db.todos.json --port 3003"
   },
   "devDependencies": {
     "@vitest/ui": "^0.25.1",
