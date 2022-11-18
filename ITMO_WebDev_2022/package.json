@@ -22,7 +22,9 @@
     "vitest": "^0.25.1"
   },
   "dependencies": {
-    "git": "^0.1.5"
+    "autoprefixer": "^10.4.13",
+    "git": "^0.1.5",
+    "postcss": "^8.4.19"
   },
   "prettier": {
     "singleQuote": true
