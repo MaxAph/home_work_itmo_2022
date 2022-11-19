@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "server:simple": "simple-server dist 3000",
+    "server:json": "echo 'JSON Server Start' && json-server --watch db.todos.json --port 3003 --static dist",
     "cy:open": "yarn dev & cypress open",
     "preview": "vite preview",
     "vitestui": "vitest --ui"
