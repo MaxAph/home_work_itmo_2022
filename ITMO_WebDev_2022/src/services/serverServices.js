@@ -1,4 +1,4 @@
-// import { delay } from '../generalUtils.js';
+import { delay } from '../model/utils/generalUtils.js';
 
 const DATA_TODO_LIST_RESOURCE = 'todos';
 

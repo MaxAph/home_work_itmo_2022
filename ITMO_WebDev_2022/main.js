@@ -11,13 +11,14 @@ import {
   wrapDevOnlyConsoleLog,
   $,
 } from './src/model/utils/generalUtils.js';
-import ServerService from './src/services/serverServices.js';
+
 import {
   LOCAL_INPUT_TEXT,
   LOCAL_LIST_OF_TODOS,
 } from './src/consts/localConsts.js';
 import DOM from './src/consts/dom.js';
 import { data } from 'autoprefixer';
+import ServerService from './src/services/serverServices.js';
 
 let listOfTodos = [];
 let selectedTodoVO = null;
