@@ -1,16 +1,15 @@
 {
-  "posts": [
+  "todos": [
     {
       "id": 1,
       "title": "json-server",
       "author": "typicode"
-    }
-  ],
-  "comments": [
+    },
     {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
+      "id": "1669135508754",
+      "title": "mhgjg",
+      "data": "2022-11-22T16:45:08.754Z",
+      "isComplited": false
     }
   ],
   "profile": {

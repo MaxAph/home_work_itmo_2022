@@ -8,7 +8,7 @@ function processResponse(response) {
   return response.json();
 }
 
-class ServerService {
+class TodoServerService {
   constructor(url) {
     this.url = url;
   }
@@ -18,7 +18,7 @@ class ServerService {
   }
 
   async requestTodos() {
-    console.log(`> ServerService -> requestTodos`);
+    console.log(`> ServerService -> requestTodos ${this.path}`);
     try {
       const listOfTodos = await fetch(this.path, {
         method: 'GET',
@@ -51,4 +51,4 @@ class ServerService {
   }
 }
 
-export default ServerService;
+export default TodoServerService;
