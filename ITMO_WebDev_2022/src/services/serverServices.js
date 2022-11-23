@@ -35,6 +35,7 @@ class TodoServerService {
       throw error;
     }
   }
+
   async saveTodo(todoVO) {
     return fetch(this.path, {
       method: 'POST',
@@ -46,6 +47,17 @@ class TodoServerService {
       .then((response) => processResponse(response, 'saveTodo'))
       .catch((error) => {
         console.log(`> ServerService -> requestTodos: error = ${error}`);
+        throw error;
+      });
+  }
+
+  async deleteTodo(id) {
+    return fetch(`${this.path}/${id}`, {
+      method: 'DELETE',
+    })
+      .then((response) => processResponse(response, 'deleteTodo'))
+      .catch((error) => {
+        console.log(`> ServerService -> deleteTodo: error = ${error}`);
         throw error;
       });
   }

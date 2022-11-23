@@ -53,19 +53,23 @@ async function onTodoDomItemClicked(event) {
   const domElement = event.target;
   console.log('> onTodoDomItemClicked', domElement);
   if (!TodoView.isDomElementMatch(domElement)) {
-    //   if (TodoView.isDomElementMatchDeleteButton(domElement)) {
-    //     const deleteTodoVO = findTodoById(TodoView.getTodoIdFromDeleteButton(domElement));
-    //     console.log('> onTodoDomItemClicked: parentNode =', parentNode);
-    //     if (confirm(`Delete ${deleteTodoVO.title}?`)) {
-    //       await todoServerService
-    //         .deleteTodo(deleteTodoVO.id)
-    //         .then(() => {
-    //           listOfTodos.splice(listOfTodos.indexOf(deleteTodoVO), 1);
-    //           render_TodoListInContainer(listOfTodos, $(Dom.LIST_OF_TODOS));
-    //         })
-    //         .catch(alert);
-    //     }
-    //   }
+    const isDeleteButton = TodoView.isDomElementDeleteButton(domElement);
+    if (isDeleteButton) {
+      const todoId = TodoView.getTodoIdFromDeleteButton(domElement);
+      console.log('> \t todoId', todoId);
+      const todoVO = findTodoById(todoId);
+      if (todoVO && confirm(`Delete: ${todoVO.title}?`)) {
+        console.log('> \t Delete confirmed', todoVO);
+        domElement.disabled = true;
+        todoServerService
+          .deleteTodo(todoId)
+          .then(() => {
+            listOfTodos.splice(listOfTodos.indexOf(todoVO, 1));
+            render_TodoListInContainer(listOfTodos, $(Dom.LIST_OF_TODOS));
+          })
+          .catch(() => {});
+      }
+    }
     return;
   }
 
