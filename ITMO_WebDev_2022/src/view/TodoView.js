@@ -5,7 +5,7 @@ class TodoView {
   static isDomElementMatch(domElement) {
     return domElement.dataset.type === TodoView.TODO_VIEW_ITEM;
   }
-  static isDomElementDeleteButton(domElement) {
+  static isDomElementMatchDeleteButton(domElement) {
     return domElement.dataset.type === TodoView.TODO_VIEW_ITEM_DELETE;
   }
 
@@ -19,7 +19,7 @@ class TodoView {
         <input type="checkbox" id="${index}"${checked}>${vo.title}
         <button data-type = "${TodoView.TODO_VIEW_ITEM_DELETE}"
          class ='delete-button' style='position: absolute;
-         right: 0; top:0; color: darkblue'>X</button>
+         right: 0; top:0; color: darkblue'>Delete</button>
     </li>`;
   }
 }

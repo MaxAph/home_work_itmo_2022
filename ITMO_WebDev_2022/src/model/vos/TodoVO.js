@@ -12,6 +12,4 @@ class TodoVO {
   }
 }
 
-class deleteTodoVO {}
-
 export default TodoVO;
