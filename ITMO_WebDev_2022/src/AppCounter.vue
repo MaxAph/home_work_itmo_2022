@@ -1,75 +1,83 @@
 <template>
   <h1 ref="header">App Counter</h1>
-  <input v-model = "inputText"/>
-<h2>{{inputText}}</h2>
-  <p v-html='innerHTML'></p>
-  <CounterValue class = "counter"                
-                v-for="obj in [  {index:1, text: 'Clicked'}]"
-                :title="obj.text"
-                :value="counter"
-                :key="obj.index"
+  <CounterValue
+    v-if="isShown"
+    class="counter"
+    v-for="obj in [{ index: 1, text: 'Clicked' }]"
+    :title="obj.text"
+    :value="counter"
+    :key="obj.index"
   />
-
-  <button v-on:click="onPlus($event, 1)">more</button>
-  <button v-if="canRenderMinusButton > 0" @click="onMinus">less</button>
+  {{ isShown ? 'More than 10' : 'Less than 10' }}
+  <button v-on:click="onPlus">+</button>
+  <button v-if="canRenderMinusButton" @click="onMinus">-</button>
 </template>
 <script>
-
-import { onMounted } from 'vue';
 import CounterValue from './components/CounterValue.vue';
 
 const LOCAL_KEY_COUNTER = 'counter';
+const LOCAL_KEY_TEXT = 'text';
+const LOCAL_KEY_LIST = 'list';
 
-const saveCounter = (value) => localStorage.setItem(LOCAL_KEY_COUNTER, value);
+const save = (key, value) => localStorage.setItem(key, value);
+
 let counterWatcher = null;
+
 export default {
-  components: { CounterValue },
-  data() {    
-      return { [LOCAL_KEY_COUNTER]: 0,};      
+  name: 'AppCounter',
+  components: {
+    CounterValue,
+  },
+  data() {
+    return {
+      counter: 0,
+    };
   },
   created() {
-    console.log('> created', this.counter);
-    this.counter = localStorage.getItem(LOCAL_KEY_COUNTER) || 0 ;
+    console.log('> created: ', this.counter);
+    this.counter = localStorage.getItem(LOCAL_KEY_COUNTER) || 0;
     counterWatcher = this.$watch(
       () => this.counter,
-      (oldValue, newValue) => {
-      console.log('> counter wathced', {oldValue, newValue});
-      saveCounter(newValue);
-    })
+      (newValue, oldValue) => {
+        console.log('> counter watched:', { newValue, oldValue });
+        save(LOCAL_KEY_COUNTER, newValue);
+      },
+    );
   },
   mounted() {
-    console.log('> mounted', this.counter);
+    console.log('> mounted: ', this.counter);
   },
   computed: {
-    canRenderMinusButton(){
+    isShown() {
+      return this.counter < 15;
+    },
+    canRenderMinusButton() {
       return this.counter > 0;
+    },
+    isAllowedToSave() {
+      return this.inputText.length === 0;
     },
   },
   methods: {
-    onPlus(event, index){
+    onPlus() {
       this.counter++;
-      saveCounter(this.counter);
-      console.log('>counter -> onPlus', this.counter,this);
+      console.log('> Counter -> onPlus:', this.counter, this);
     },
-    onMinus(){
+    onMinus() {
       this.counter--;
-      if(this.counter === 0)
-     { this$refs.header.innerText = `<b>Header</b> ${this.counter}`}
-      saveCounter(this.counter);
-      console.log('>counter -> onMinus', this.counter);
+      if (this.counter === 0) {
+        this.$refs.header.innerText = `Header: ${this.counter}`;
+      }
+      console.log('> Counter -> onMinus:', this.counter);
     },
   },
-  // unmounted() {
-  //   counterWatcher()
-  // }
-}
-
+  unmounted() {
+    counterWatcher();
+  },
+};
 </script>
 <style lang="scss" scoped>
 .counter {
   color: green;
 }
-
 </style>
-
-
