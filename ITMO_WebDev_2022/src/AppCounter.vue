@@ -41,7 +41,7 @@ export default {
       (newValue, oldValue) => {
         console.log('> counter watched:', { newValue, oldValue });
         save(LOCAL_KEY_COUNTER, newValue);
-      },
+      }
     );
   },
   mounted() {
