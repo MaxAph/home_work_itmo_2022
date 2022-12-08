@@ -1,6 +1,7 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 import type { ITodoVO } from '@/model/vos/TodoVO';
 import TodoVO from '@/model/vos/TodoVO';
+import type { RouteParamValue } from 'vue-router';
 import type { PersistedStateOptions } from 'pinia-plugin-persistedstate';
 
 const LOCAL_KEY_TODOS = 'todos';

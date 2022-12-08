@@ -42,6 +42,8 @@ const validator = useVuelidate(
 
 const validate = () => validator.value.$validate();
 
+const resetInputText = () => setInputTitleText('');
+
 const isActionButtonDisabled = computed(() => {
   return (
     validator.value.inputTitleText.$error ||
@@ -88,6 +90,8 @@ const onCreateButtonClick = () => {
   validate();
 };
 
+const getTodoRoute = (index: number) => `/todo/${index}`;
+
 watch(inputTitleText, (value) => {
   console.log('input', inputTitleText);
   if (!store.hasSelectedTodo) {
@@ -99,11 +103,14 @@ onMounted(() => validate());
 <template>
   <Spinner v-if="isLoading" />
   <main v-else>
-    <input
-      v-model="inputTitleText"
-      @keyup.enter="onCreateButtonClick"
-      @keyup="validate"
-    />
+    <transition appear name="fade">
+      <input
+        v-model="inputTitleText"
+        @keyup.enter="onCreateButtonClick"
+        @keyup="validate"
+      />
+    </transition>
+
     <button
       ref="domButtonCreate"
       @click="onCreateButtonClick"
@@ -111,23 +118,49 @@ onMounted(() => validate());
     >
       Create
     </button>
-    <ol>
-      <li
-        v-for="todo in todos"
+    <vs-list>
+      <vs-list-item
+        v-for="(todo, index) in todos"
         @click.self="onTodoListItemClicked(todo)"
         :class="{ selected: checkTodoSelected(todo) }"
         :key="todo.id"
+        :title="todo.title"
       >
-        {{ todo.title }}
-        <button @click.once="onDeleteTodo(todo)" class="delete">x</button>
-      </li>
-    </ol>
+        <vs-row vs-align="center" class="todo-item">
+          <RouterLink :to="getTodoRoute(index)" class="open-todo-link"
+            >Open</RouterLink
+          >
+          <vs-button color="danger" type="flat" @click="onDeleteTodo(todo)"
+            >Delete</vs-button
+          >
+          <vs-switch color="warning" />
+        </vs-row>
+      </vs-list-item>
+    </vs-list>
   </main>
 </template>
 <style lang="scss" scoped>
 .selected {
   background-color: #f1f1f1;
   outline: 1px solid #ccc;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.open-todo-link {
+  transition: all 0.1s ease-out;
+  transform: rotate(0);
+  font-size: 1em;
+  &:hover {
+    transform: rotate(360deg);
+    font-size: 1.2em;
+  }
 }
 .delete {
   display: none;
