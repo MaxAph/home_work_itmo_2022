@@ -141,8 +141,8 @@ onMounted(() => validate());
 </template>
 <style lang="scss" scoped>
 .selected {
-  background-color: #f1f1f1;
-  outline: 1px solid #ccc;
+  background-color: #8be7f5;
+  outline: 1px solid rgb(108, 201, 224);
 }
 .fade-enter-active,
 .fade-leave-active {
@@ -177,7 +177,7 @@ li {
   position: relative;
   box-sizing: border-box;
   &:hover {
-    background-color: #fcfcfc;
+    background-color: #75aadb;
     & > button {
       &.delete {
         display: block;

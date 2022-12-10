@@ -1,6 +1,6 @@
 <template>
-  <p class = "value" :class="{alert: isAlert}">
-    <span style ="color:blue">
+  <p class="value" :class="{ alert: isAlert }">
+    <span style="color: blue">
       {{ title }}
     </span>
     :{{ value }}
@@ -11,27 +11,26 @@ import { computed } from '@vue/reactivity';
 
 export default {
   props: {
-    title:'',
+    title: '',
     value: 0,
   },
 
   computed: {
-  isAlert() {
-    return this.value >= 10;
-   },
- },
-}
+    isAlert() {
+      return this.value >= 10;
+    },
+  },
+};
 </script>
 <style lang="scss" scoped>
-  .value {
-  color:red;
+.value {
+  color: rgb(243, 90, 90);
   font-size: 2rem;
   font-weight: bold;
-  font-family: Calibri;
-  
+
   &.alert {
-    background-color: rgb(132, 197, 132);     
+    background-color: rgb(230, 85, 85);
   }
-  margin-right: 85%;
+  margin-right: 86%;
 }
 </style>

@@ -10,11 +10,11 @@
     :key="obj.index"
   />
 
-  <vs-button style="margin-right: 0.5rem" color="dark" v-on:click="onPlus"
-    >+</vs-button
+  <vs-button style="margin-right: 0.5rem" color="#E83A33" v-on:click="onPlus"
+    >More</vs-button
   >
-  <vs-button color="dark" v-if="canRenderMinusButton" @click="onMinus"
-    >-</vs-button
+  <vs-button color="#FFB800" v-if="canRenderMinusButton" @click="onMinus"
+    >Less</vs-button
   >
 </template>
 <script>
@@ -83,6 +83,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .counter {
-  color: green;
+  color: rgb(11, 111, 11);
 }
 </style>

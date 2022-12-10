@@ -22,9 +22,9 @@ const canRenderNumberOfTodos = computed(() => isCurrentRouteIndex());
 <template>
   <header>
     <img
-      alt="Vue logo"
+      alt="Logo"
       class="logo"
-      src="@/assets/logo.svg"
+      src="https://static8.depositphotos.com/1498082/1062/v/450/depositphotos_10627193-stock-illustration-sheep-vector.jpg"
       width="125"
       height="125"
     />
