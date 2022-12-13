@@ -15,7 +15,7 @@ domInputQty.addEventListener('input', totalItemAndSaveLocalStorage);
 domInputCost.addEventListener('input', totalItemAndSaveLocalStorage);
 domWorkItem.addEventListener('keyup', totalItemAndSaveLocalStorage);
 domDescription.addEventListener('keyup', totalItemAndSaveLocalStorage);
-domBtnCreate.addEventListener('click', addItemPopup);
+domBtnCreate.addEventListener('click', addItemPopup());
 
 function onBtnOpenAddWorkItem() {
   popup.style.display = 'block';
@@ -47,15 +47,29 @@ function totalItemAndSaveLocalStorage() {
 // localStorage.setItem('inputWorkItemQty', val);
 // console.log('LOG', domInputQty);
 
-// class todoItem {
-//   constructor(qty, cost, total, workItem, description) {
-//     this.qty = qty;
-//     this.cost = cost;
-//     this.total = total;
-//     this.workItem = workItem;
-//     this.description = description;
-//   }
-// }
+class ItemVO {
+  static createFromID(id) {
+    const todoId = Date.now().toString();
+    return new ItemVO(todoId, id);
+  }
+  constructor(id, qty, cost, total, workItem, description, date = new Date()) {
+    this.qty = qty;
+    this.cost = cost;
+    this.total = total;
+    this.workItem = workItem;
+    this.description = description;
+    this.id = id;
+    this.date = date;
+  }
+}
+
+function create_ItemVOFromIdAndAddToList(id, listOfItems) {
+  // console.log('> create_TodoFromTextAndAddToList -> input =', input);
+  const newItemVO = ItemVO.createFromId(id);
+  listOfItems.push(newItemVO);
+  return newItemVO;
+}
+
 // const item1 = new todoItem(
 //   localStorage.getItem('domInputQty'),
 //   localStorage.getItem('domInputCost'),
@@ -84,6 +98,8 @@ function addItemPopup() {
     localStorage.getItem('domItemTotal');
   domBtnClose.click();
 }
+
+
 
 function discountAndTaxes() {
   let result = localStotage.getItem('SubtotalEnd');
