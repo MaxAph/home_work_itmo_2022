@@ -24,32 +24,43 @@ const workItemTemplateSimpleCopy =
 popup.addEventListener('keyup', validateQtyCostDescription);
 domInpInvoiceNumber.addEventListener(
   'input',
-  InputOnlyNumber,
   saveInvoiceNumberAndIBANInLocalStorage
 );
 domInputIBAN.addEventListener('input', saveInvoiceNumberAndIBANInLocalStorage);
 domBtnPlus.addEventListener('click', onBtnOpenAddWorkItem);
 domBtnClose.addEventListener('click', onBtnCloseAddWorkItem);
-domInputQty.addEventListener(
-  'input',
-  InputOnlyNumber,
-  totalItemAndSaveLocalStorage
-);
-domInputCost.addEventListener(
-  'input',
-  InputOnlyNumber,
-  totalItemAndSaveLocalStorage
-);
+domInputQty.addEventListener('input', totalItemAndSaveLocalStorage);
+domInputCost.addEventListener('input', totalItemAndSaveLocalStorage);
 domWorkItem.addEventListener('keyup', totalItemAndSaveLocalStorage);
 domDescription.addEventListener('keyup', totalItemAndSaveLocalStorage);
 
-domDiscountInput.addEventListener('input', InputOnlyNumber, discountAndTaxes);
-domTaxesInput.addEventListener('input', InputOnlyNumber, discountAndTaxes);
+domDiscountInput.addEventListener('input', discountAndTaxes);
+domTaxesInput.addEventListener('input', discountAndTaxes);
 containerForWorkItems.addEventListener('click', openAndChangeWorkItem);
 
 domInpInvoiceNumber.oninput = (event) => InputLimit(4, event.currentTarget);
 domDiscountInput.oninput = (event) => InputLimit(2, event.currentTarget);
 domTaxesInput.oninput = (event) => InputLimit(2, event.currentTarget);
+
+document
+  .querySelector('#inputWorkItemQty')
+  .addEventListener('input', InputOnlyNumber);
+
+document
+  .querySelector('#inputWorkItemCost')
+  .addEventListener('input', InputOnlyNumber);
+
+document
+  .querySelector('#inputInvoiceNumber')
+  .addEventListener('input', InputOnlyNumber);
+
+document
+  .querySelector('#inputDiscountPercent')
+  .addEventListener('input', InputOnlyNumber);
+
+document
+  .querySelector('#inputTaxPercent')
+  .addEventListener('input', InputOnlyNumber);
 
 function InputOnlyNumber(e) {
   this.value = this.value.replace(/[^\d.]/g, '');
