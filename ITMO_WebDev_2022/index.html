@@ -22,13 +22,14 @@
           >
             <header class="flex flex-row justify-between">
               <button
-                class="text-red enabled:hover:font-bold disabled:text-gray-300"
+                disabled
+                class="text-red-400 enabled:hover:font-bold disabled:text-gray-300"
                 id="btnDeleteWorkItemPopup"
               >
                 Delete
               </button>
               <button
-                class="text-gray hover:text-black"
+                class="text-gray-400 hover:text-black"
                 id="btnCloseWorkItemPopup"
               >
                 close
@@ -41,22 +42,16 @@
               <div class="font-bold self-end">
                 <label for="inputWorkItemQty">Qty: </label>
                 <input
-                  class="w-16 input-percentage"
+                  class="w-16 border-b-2 focus:border-slate-500 border-gray-300 focus:text-slate-500 focus:outline-none"
                   id="inputWorkItemQty"
-                  pattern="[0-9]{2}"
-                  required
-                  type="text"
                   value=""
                 />
               </div>
               <div class="font-bold self-end">
                 <label for="inputWorkItemCost">Cost: $</label>
                 <input
-                  class="w-16 input-percentage"
+                  class="w-16 border-b-2 focus:border-slate-500 border-gray-300 focus:text-slate-500 focus:outline-none"
                   id="inputWorkItemCost"
-                  pattern="[0-9]{2}"
-                  required
-                  type="text"
                   value=""
                 />
               </div>
@@ -65,8 +60,9 @@
                 <span class="text-lg" id="workItemTotalContainer">0</span>
               </div>
               <button
-                class="px-4 bg-black text-white rounded-xl enabled:hover:bg-dark-900 disabled:opacity-30 disabled:text-gray"
+                class="px-4 bg-gray-800 text-white rounded-xl enabled:hover:bg-black disabled:opacity-30 disabled:text-gray"
                 id="btnCreateWorkItem"
+                disabled
               >
                 Create
               </button>
@@ -80,7 +76,7 @@
                     </div>
                     <div class="w-full mt-1">
                       <input
-                        class="bg-gray-100 border-1 w-full h-full p-2"
+                        class="bg-gray-100 border-2 w-full h-full p-2"
                         id="inputWorkItemTitle"
                         placeholder="Enter title of the work item"
                       />
@@ -94,7 +90,7 @@
                     </div>
                     <div class="w-full mt-1 h-32">
                       <textarea
-                        class="bg-gray-100 border-1 w-full h-full p-2"
+                        class="bg-gray-100 border-2 w-full h-full p-2"
                         id="inputWorkItemDescription"
                         placeholder="Write what this work item about"
                         style="resize: none"
@@ -112,11 +108,12 @@
               <h1 class="text-[44px] text-slate-400">
                 <label for="inputInvoiceNumber">№ </label>
                 <input
+                  max="9999"
                   class="w-32 border-b-2 focus:border-slate-500 focus:text-slate-500 focus:outline-none"
                   id="inputInvoiceNumber"
                   pattern="[0-9]"
                   required
-                  type="text"
+                  name="invoice"
                 />
               </h1>
             </div>
@@ -181,18 +178,24 @@
                     </div>
                   </div>
                 </section>
+                <hr class="my-1 h-px bg-black border-0" />
                 <div class="flex-col" id="tableWorkItems">
                   <div
+                    id="templateWorkItem"
+                    style="display: none"
                     class="[&>*]:pointer-events-none grid grid-cols-8 select-none items-center border-b-1 py-2 hover:bg-gray-100"
                     layout-template-fro-work-item
                   >
                     <div class="col-span-4 self-end pl-2 pr-3">
-                      <div class="font-bold"></div>
-                      <div class="text-xs text-gray-400"></div>
+                      <div class="title font-bold"><strong></strong></div>
+                      <div class="description text-xs text-gray-400"></div>
                     </div>
-                    <div></div>
-                    <div></div>
-                    <div class="col-span-2 text-right pr-2"></div>
+                    <div class="Qty"></div>
+                    <div class="Cost"></div>
+                    <div
+                      class="Total col-span-2 text-right pr-2, total"
+                      id="Total"
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -206,22 +209,21 @@
               </div>
               <div class="flex flex-row justify-end mt-16">
                 <div class="w-50%">
+                  <hr class="my-1 h-px bg-black border-0" />
                   <section class="border-top leading-8 pt-2">
                     <div class="flex flex-col">
                       <div class="flex flex-row justify-between">
                         Subtotal
-                        <span id="resultsSubtotalContainer">0</span>
+                        <div id="resultsSubtotalContainer">0</div>
                       </div>
                       <div class="flex flex-row justify-between">
                         <span>
                           <label for="inputDiscountPercent">Discount (</label>
                           <input
-                            class="w-6 input-percentage"
+                            class="w-6 border-b-2 focus:border-slate-500 border-gray-300 focus:text-slate-500 focus:outline-none"
                             id="inputDiscountPercent"
-                            pattern="[0-9]{2}"
-                            required
-                            type="text"
-                            value="0"
+                            placeholder="0"
+                            name="discount"
                           />
                           % ) <sup class="text-gray-400">floor</sup>
                         </span>
@@ -231,12 +233,10 @@
                         <span>
                           <label for="inputTaxPercent">Taxes (</label>
                           <input
-                            class="w-6 input-percentage"
+                            class="w-6 border-b-2 focus:border-slate-500 border-gray-300 focus:text-slate-500 focus:outline-none"
                             id="inputTaxPercent"
-                            pattern="[0-9]{2}"
-                            required
-                            type="text"
-                            value="0"
+                            placeholder="0"
+                            name="taxes"
                           />
                           % ) <sup class="text-gray-400">ceil</sup>
                         </span>
@@ -244,11 +244,12 @@
                       </div>
                     </div>
                   </section>
-                  <section class="border-top mt-16 leading-8 pt-2">
+                  <section class="mt-16 leading-8 pt-2">
+                    <hr class="my-1 h-px bg-black border-0" />
                     <div class="flex flex-row justify-between">
-                      <b>Total</b>
+                      <b>Result:</b>
                       <span>
-                        <span id="resultsTotalContainer">0</span>
+                        <span id="resultsTotalContainer"></span>
                         <span class="text-gray-300">$</span>
                       </span>
                     </div>
@@ -258,16 +259,17 @@
             </div>
           </main>
           <footer class="flex flex-row justify-end mt-36">
-            <section class="flex-col w-50%">
+            <section class="flex-col w-1/2">
               <header class="flex flex-row justify-between">
                 <b>IBAN</b>
                 <input
-                  class="w-78 input-percentage placeholder:text-slate-200"
+                  class="w-1/2 placeholder:text-slate-200 border-b-2 border-gray-300 focus:border-slate-500 focus:text-slate-500 focus:outline-none"
                   id="inputIBANNumber"
                   placeholder="Up to 34 alphanumeric characters"
-                  required
                   type="text"
+                  maxlength="30"
                   value=""
+                  name="iban"
                 />
               </header>
               <main class="mt-4 text-sm text-gray-500">
